@@ -44,6 +44,11 @@ var HeroesPage = function() {
 
         return heroes;
     };
+
+    this.saveHeroes = function () {
+        va
+    };
+
 };
 
 
