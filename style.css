@@ -1,0 +1,28 @@
+body {
+    background-color: #343434;
+    color: #ffffff;
+}
+
+.tile {
+    cursor: pointer;
+    border: 2px solid #bebebe;
+    border-radius: 5px;
+    width: 95%;
+    height: 95%;
+}
+
+.tile:hover {
+    border-color: #36be9e;
+    color: #36be9e;
+    font-weight: bold;
+}
+
+.tile.selected {
+    border-color: #36be9e;
+    color: #36be9e;
+    font-weight: bold;
+}
+
+button {
+    cursor: pointer;
+}
