@@ -3,7 +3,8 @@ var HeroesPage = function() {
     this.fields = {
         chosenHero: $('#chosen_hero'),
         heroList: $('#hero_list'),
-        pickButton: $('#pick_hero')
+        pickButton: $('#pick_hero'),
+        selectAll: $('#select_all')
     };
     this.heroes = [];
 
@@ -84,6 +85,11 @@ $(document).ready(function () {
 
         var randomHero = new Random(heroes);
         page.renderHero(randomHero.randomValue());
+    });
+
+    page.fields.selectAll.on('click', function() {
+        page.markSelected($('.tile'));
+        page.saveHeroes(page.getHeroesArray());
     });
 });
 
