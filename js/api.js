@@ -1,7 +1,7 @@
 var Api = function () {
 };
 
-Api.prototype.getHeroes = function (callback) {
+Api.prototype.loadHeroes = function (callback) {
     $.ajax({
         dataType: 'json',
         success: callback,

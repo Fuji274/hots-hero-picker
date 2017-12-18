@@ -6,7 +6,7 @@ var Hero = function (obj) {
 };
 
 Hero.prototype.render = function () {
-    return '<div class="tile hero-details p-2 text-center"><div class="hero-img"><img src="' +
+    return '<div class="tile hero-details p-2 text-center" id="' + this.shortName + '"><div class="hero-img"><img src="' +
         this.icon + '" class="rounded img-fluid" alt="' + this.shortName +'"></div><div class="hero-name mt-2">' +
         '<input type="checkbox" value="' + this.shortName + '"> ' + this.name + '</div></div>';
 };

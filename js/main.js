@@ -5,11 +5,12 @@ var HeroesPage = function() {
         heroList: $('#hero_list'),
         pickButton: $('#pick_hero')
     };
+    this.heroes = [];
 
     var self = this;
 
     this.renderHeroes = function() {
-        this.api.getHeroes(function (obj) {
+        this.api.loadHeroes(function (obj) {
             obj.pop();
             var html = '';
             $.each(obj, function (index, val) {
@@ -17,7 +18,8 @@ var HeroesPage = function() {
                 html += '<div class="col-2">' + hero.render() + '</div>';
             });
             self.fields.heroList.html(html);
-            self.markSelected($('.tile'));
+            var heroes = self.loadHeroes();
+            self.markSelected($('#' + heroes.join(",#")));
         });
     };
 
@@ -45,10 +47,21 @@ var HeroesPage = function() {
         return heroes;
     };
 
-    this.saveHeroes = function () {
-        va
+    this.saveHeroes = function (heroes) {
+        var storage = new StorageWrapper('local');
+        storage.setObject('heroes', heroes);
     };
 
+    this.loadHeroes = function() {
+        var storage = new StorageWrapper('local');
+        var heroes = storage.getObject('heroes');
+
+        if(!Array.isArray(heroes)) {
+            heroes = self.getHeroesArray();
+        }
+
+        return heroes;
+    }
 };
 
 
@@ -61,12 +74,15 @@ $(document).ready(function () {
         tile.toggleClass('selected');
         var checkbox = tile.find('input[type="checkbox"]');
         checkbox.prop('checked', !checkbox.prop('checked'));
+        page.saveHeroes(page.getHeroesArray());
     });
 
     page.renderHeroes();
 
     page.fields.pickButton.on('click', function() {
-        var randomHero = new Random(page.getHeroesArray());
+        var heroes = page.loadHeroes();
+
+        var randomHero = new Random(heroes);
         page.renderHero(randomHero.randomValue());
     });
 });
