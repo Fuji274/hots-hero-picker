@@ -20,7 +20,6 @@ var HeroesPage = function () {
             });
             self.fields.heroList.html(html);
             var heroes = self.loadHeroes();
-            console.log(heroes);
             if (heroes.length > 0) {
                 self.markSelected($('#' + heroes.join(",#")));
             }
