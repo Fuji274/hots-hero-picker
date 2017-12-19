@@ -1,4 +1,4 @@
-var HeroesPage = function() {
+var HeroesPage = function () {
     this.api = new Api();
     this.fields = {
         chosenHero: $('#chosen_hero'),
@@ -10,36 +10,49 @@ var HeroesPage = function() {
 
     var self = this;
 
-    this.renderHeroes = function() {
+    this.renderHeroes = function () {
         this.api.loadHeroes(function (obj) {
             obj.pop();
             var html = '';
             $.each(obj, function (index, val) {
                 var hero = new Hero(val);
-                html += '<div class="col-2">' + hero.render() + '</div>';
+                html += '<div class="col-2">' + hero.render(true) + '</div>';
             });
             self.fields.heroList.html(html);
             var heroes = self.loadHeroes();
-            self.markSelected($('#' + heroes.join(",#")));
+            console.log(heroes);
+            if (heroes.length > 0) {
+                self.markSelected($('#' + heroes.join(",#")));
+            }
         });
     };
 
-    this.renderHero = function(hero) {
-        this.api.getHero(hero, function(obj) {
+    this.renderHero = function (hero) {
+        this.api.getHero(hero, function (obj) {
             var hero = new Hero(obj);
-            var html = '<div class="offset-3 col-6">' + hero.render() + '</div>';
-            var parsed = $.parseHTML(html);
-            $(parsed).find('input').remove();
-            self.fields.chosenHero.html(parsed);
+            var html = '<div class="offset-3 col-6">' + hero.render(false) + '</div>';
+            self.fields.chosenHero.html(html);
         });
     };
 
-    this.markSelected = function(selector) {
+    this.markSelected = function (selector) {
         selector.addClass('selected');
-        selector.find('input[type="checkbox"]').prop('checked', true);
+        var checkbox = selector.find('input[type="checkbox"]');
+        checkbox.prop('checked', true);
     };
 
-    this.getHeroesArray = function() {
+    this.toggleSelected = function (selector) {
+        selector.toggleClass('selected');
+        var checkbox = selector.find('input[type="checkbox"]');
+        checkbox.prop('checked', !checkbox.prop('checked'));
+    };
+
+    this.selectHero = function (selector, callback) {
+        callback(selector);
+        self.saveHeroes(self.getHeroesArray());
+    };
+
+    this.getHeroesArray = function () {
         var heroes = [];
         self.fields.heroList.find('input:checked').each(function () {
             heroes.push($(this).val());
@@ -53,11 +66,11 @@ var HeroesPage = function() {
         storage.setObject('heroes', heroes);
     };
 
-    this.loadHeroes = function() {
+    this.loadHeroes = function () {
         var storage = new StorageWrapper('local');
         var heroes = storage.getObject('heroes');
 
-        if(!Array.isArray(heroes)) {
+        if (!Array.isArray(heroes)) {
             heroes = self.getHeroesArray();
         }
 
@@ -67,29 +80,24 @@ var HeroesPage = function() {
 
 
 $(document).ready(function () {
-
     var page = new HeroesPage();
 
     page.fields.heroList.on('click', '.tile', function (event) {
         var tile = $(this);
-        tile.toggleClass('selected');
-        var checkbox = tile.find('input[type="checkbox"]');
-        checkbox.prop('checked', !checkbox.prop('checked'));
-        page.saveHeroes(page.getHeroesArray());
+        page.selectHero(tile, page.toggleSelected);
     });
 
     page.renderHeroes();
 
-    page.fields.pickButton.on('click', function() {
+    page.fields.pickButton.on('click', function () {
         var heroes = page.loadHeroes();
 
         var randomHero = new Random(heroes);
         page.renderHero(randomHero.randomValue());
     });
 
-    page.fields.selectAll.on('click', function() {
-        page.markSelected($('.tile'));
-        page.saveHeroes(page.getHeroesArray());
+    page.fields.selectAll.on('click', function () {
+        page.selectHero($('.tile'), page.markSelected);
     });
 });
 
